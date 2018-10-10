@@ -1,0 +1,34 @@
+METHOD RK4
+
+STARTTIME = 0
+STOPTIME=15
+DT = 0.02
+DTOUT = 1
+
+nsim = 1
+
+r = 0.5;	Growth rate/week
+s = 0.3;	Death rate/week
+N0 = 1;	Initial number
+
+{Exact implementation - often unobtainable for non-linear models}
+N_exact = N0*exp((r-s)*TIME)
+
+{Differential equation implementation}
+init N_ODE = N0
+d/dt (N_ODE) = r*N_ODE-s*N_ODE
+
+{Stochastic implementation with initial condition, number of births in time t to t+dt and then update to next step}
+init N[1..nsim] = N0
+growthAndDeath[1..nsim] = binomial((r+s)*dt, N[i])
+death[1..nsim] = binomial(s/(r+s), growthAndDeath[i])
+growth[1..nsim] = growthAndDeath[i] - death[i]
+next N[1..nsim] = N[i] + growth[i] - death[i]
+
+N_Mean = ARRAYMEAN(N[*]); estimate average
+
+{Stochastic estimate of fade-out fraction}
+init fade[1..nsim] = 1;
+next fade[1..nsim] = if(N[i]>=1) then 1 else 0;
+
+fade_fraction =100-100*ARRAYMEAN(fade[*])

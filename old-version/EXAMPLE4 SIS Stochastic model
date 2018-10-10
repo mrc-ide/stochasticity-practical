@@ -1,0 +1,47 @@
+METHOD RK4
+
+STARTTIME = 0
+STOPTIME=600
+DT = 0.01
+
+{Parameters}
+beta = 0.5  ; contact rate
+nu = 0.3    ; recovery 
+N = 100      ; total population. 
+nsim = 100   ; number of simulations. 
+
+infPrevalence = N*(beta - nu)/beta
+
+I_det = infPrevalence*1/(1+(infPrevalence/Inf0 - 1)*exp(-(beta-nu)*TIME))
+
+Inf0 = INT(infPrevalence)  ; INITIAL CONDITION FOR THE ENDEMIC SITUATION.
+;Inf0 = 1 ; INITIAL CONDITION  FOR THE EPIDEMIC SITUATION. 
+
+{THE MODEL}
+{variables}
+init  Infected[1..nsim] = Inf0 
+
+Susceptibles[1..nsim] = N-infected[i]
+FOI[1..nsim] = beta*infected[i]/N
+
+{Calculate events}
+infEvents[1..nsim] = binomial(FOI[i]*dt, Susceptibles[i])
+recEvents[1..nsim] = binomial(nu*dt, infected[i])
+
+{Calculate state next time step}
+next infected[1..nsim] = infected[i] + infEvents[i] - recEvents[i]
+
+{STATISTICS FROM THE MODEL}
+
+{Outbreak size}
+init totalInfEvents[1..nsim] = 0 
+next totalInfEvents[1..nsim] = totalInfEvents[i] + infEvents[i]
+fracIndInfected[1..nsim] = totalInfEvents[i]/N
+
+init meanInfWithTime = 0 
+meanInf = ARRAYMEAN(infected[*])
+next meanInfWithTime = meanInfWithTime + meanInf*DT/STOPTIME
+
+init fade_out[1..nsim] = 0
+next fade_out[1..nsim] = IF(infected[i]<0.5) Then 1 else 0
+meanFadeout = ARRAYMEAN(fade_out[*])*100
