@@ -1,0 +1,2219 @@
+tested$why3[tested$why == "I was offered a routine test"] <- "screen - provider init"
+table(tested$why3)
+tested$why3 <- factor(tested$why3, levels = names(table(tested$why3))[order(table(tested$why3), decreasing=TRUE)], ordered = TRUE)
+table(tested$why3)
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen")#
+				)))#
+		}#
+	}#
+}
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen - provider init")#
+				)))#
+		}#
+	}#
+}
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)
+#################################
+# analysis on people who were tested for chlamydia#
+#################################
+#
+# to be included in the subset tested for chlamydia in the last year, participants had to be:#
+# sexually active (hetlife > 0 or samlife > 0)#
+# aged < 45 (otherwise, were not asked whether they had tested)#
+# EITHER diagnosed within the last year, OR reported testing within the last year#
+tested <- natsal3[natsal3$hetlife >0 | natsal3$samlife > 0,]#
+tested <- tested[tested$dage < 45,]#
+tested <- tested[(tested$whnchlam == "Less than 1 year ago") | (tested$chlmtest == "Yes"),]#
+#
+##### restrict to 16-24-year-olds#
+#tested <- tested[tested$agrp == "16-24",]#
+#
+tested$why <- factor(NA, levels = levels(tested$chtstwy1))#
+tested$why[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwy1[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))]#
+tested$why[!(tested$chltstwy %in% c("Not applicable", "Not answered"))] <- tested$chltstwy[!(tested$chltstwy %in% c("Not applicable", "Not answered"))]#
+tested$why <- droplevels(tested$why)#
+#
+tested$why2 <- NA#
+tested$why2[tested$why == "I had symptoms"] <- "symptoms"#
+tested$why2[tested$why %in% c("My partner had symptoms", "I was notified because a partner was diagnosed with Chlamydia")] <- "partner"#
+tested$why2[tested$why == "Check up after previous positive test"] <- "re-test"#
+tested$why2[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia", "I was offered a routine test")] <- "screen"#
+tested$why2[tested$why == "Other"] <- "other"#
+tested$why2 <- factor(tested$why2, levels = names(table(tested$why2))[order(table(tested$why2), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$why3 <- as.character(tested$why2)#
+tested$why3[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia")] <- "screen - patient init"#
+tested$why3[tested$why == "I was offered a routine test"] <- "screen - provider init"#
+tested$why3 <- factor(tested$why3, levels = names(table(tested$why3))[order(table(tested$why3), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$where <- factor(NA, levels = unique(c(levels(tested$chtstwh1), levels(tested$chltstwh))))#
+tested$where[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwh1[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))]#
+tested$where[!(tested$chltstwh %in% c("Not applicable", "Not answered"))] <- tested$chltstwh[!(tested$chltstwh %in% c("Not applicable", "Not answered"))]#
+tested$where[tested$where == "NHS Family planning clinic / contraceptive clinic / reproductive health clinic"] <- "NHS FP clinic / contraceptive clinic / reproductive health clinic"#
+tested$where <- droplevels(tested$where)#
+#
+tested$where2 <- NA#
+tested$where2[tested$where == "Sexual health clinic (GUM clinic)"] <- "sexual health"#
+tested$where2[tested$where == "General practice (GP) surgery"] <- "GP"#
+tested$where2[tested$where == "NHS FP clinic / contraceptive clinic / reproductive health clinic"] <- "family planning"#
+tested$where2[tested$where == "School / college / university"] <- "education"#
+tested$where2[tested$where %in% c("Ante-natal Clinic / midwife", "Private non-NHS clinics or doctor", "Youth advisory clinic (e.g. Brook Clinic)", "Termination of pregnancy (abortion) clinic", "Hospital accident and emergency (A&E) department", "Pharmacy / chemist", "Internet", "Other non-health care place, e.g. youth club, festival, bar", "Somewhere else")] <- "elsewhere"#
+#
+tested$where2 <- factor(tested$where2, levels = names(table(tested$where2))[order(table(tested$where2), decreasing=TRUE)], ordered = TRUE)#
+#
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen - provider init")#
+				)))#
+		}#
+	}#
+}
+dt <- read.csv("~/Documents/ct_trends/Natsal_symptoms_testing/positivity_by_venue_reason_2.csv")
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)
+mtext("Education", side=1, line=1, at = 2.5, adj = 0.5)
+mtext("Elsewhere", side=1, line=1, at = 7.5, adj = 0.5)
+mtext("FP", side=1, line=1, at = 12.5, adj = 0.5)
+mtext("GP", side=1, line=1, at = 16.5, adj = 0.5)
+mtext("GP", side=1, line=1, at = 17.5, adj = 0.5)
+mtext("SH", side=1, line=1, at = 22.5, adj = 0.5)
+mtext("Elsewhere", side=1, line=1, at = 32.5, adj = 0.5)
+mtext("Education", side=1, line=1, at = 27.5, adj = 0.5)
+mtext("FP", side=1, line=1, at = 37.5, adj = 0.5)
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)
+mtext("SH", side=1, line=1, at = 47.5, adj = 0.5)
+mtext("Women", side=1, line=3, at = 12.5, adj = 0.5)
+mtext("Men", side=1, line=3, at = 37.5, adj = 0.5)
+axis(side = 1, line = 2.5, at = c(1,24), labels = FALSE, tcl=0)
+axis(side = 1, line = 2.5, at = c(26,49), labels = FALSE, tcl=0)
+legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")
+legend('topleft', inset = c(0.015,0.05),#
+	col = 2:5,#
+	pch = 1, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)
+# Analysis of Natsal data to compare positivity among non-symptomatic testers with population prevalence.#
+#
+rm(list=ls())#
+#
+library(foreign)#
+library(survey)#
+#
+natsal3 <- read.dta("~/Documents/Natsal-3/UKDA-7799-stata11/stata11/eul_natsal_2010_for_archive.dta")#
+#
+#################################
+# analysis on people who were tested for chlamydia#
+#################################
+#
+# to be included in the subset tested for chlamydia in the last year, participants had to be:#
+# sexually active (hetlife > 0 or samlife > 0)#
+# aged < 45 (otherwise, were not asked whether they had tested)#
+# EITHER diagnosed within the last year, OR reported testing within the last year#
+tested <- natsal3[natsal3$hetlife >0 | natsal3$samlife > 0,]#
+tested <- tested[tested$dage < 45,]#
+tested <- tested[(tested$whnchlam == "Less than 1 year ago") | (tested$chlmtest == "Yes"),]#
+#
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)
+table(tested$chtstwy1, tested$chtstwh1)
+table(tested$chtstwy1, tested$chtstwh1, tested$agrp)
+# Analysis of Natsal data to compare positivity among non-symptomatic testers with population prevalence.#
+#
+rm(list=ls())#
+#
+library(foreign)#
+library(survey)#
+#
+natsal3 <- read.dta("~/Documents/Natsal-3/UKDA-7799-stata11/stata11/eul_natsal_2010_for_archive.dta")#
+#
+#################################
+# analysis on people who were tested for chlamydia#
+#################################
+#
+# to be included in the subset tested for chlamydia in the last year, participants had to be:#
+# sexually active (hetlife > 0 or samlife > 0)#
+# aged < 45 (otherwise, were not asked whether they had tested)#
+# EITHER diagnosed within the last year, OR reported testing within the last year#
+tested <- natsal3[natsal3$hetlife >0 | natsal3$samlife > 0,]#
+tested <- tested[tested$dage < 45,]#
+tested <- tested[(tested$whnchlam == "Less than 1 year ago") | (tested$chlmtest == "Yes"),]#
+#
+##### restrict to 16-24-year-olds#
+#tested <- tested[tested$agrp == "16-24",]#
+#
+tested$why <- factor(NA, levels = levels(tested$chtstwy1))#
+tested$why[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwy1[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))]#
+tested$why[!(tested$chltstwy %in% c("Not applicable", "Not answered"))] <- tested$chltstwy[!(tested$chltstwy %in% c("Not applicable", "Not answered"))]#
+tested$why <- droplevels(tested$why)#
+#
+tested$why2 <- NA#
+tested$why2[tested$why == "I had symptoms"] <- "symptoms"#
+tested$why2[tested$why %in% c("My partner had symptoms", "I was notified because a partner was diagnosed with Chlamydia")] <- "partner"#
+tested$why2[tested$why == "Check up after previous positive test"] <- "re-test"#
+tested$why2[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia", "I was offered a routine test")] <- "screen"#
+tested$why2[tested$why == "Other"] <- "other"#
+tested$why2 <- factor(tested$why2, levels = names(table(tested$why2))[order(table(tested$why2), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$why3 <- as.character(tested$why2)#
+tested$why3[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia")] <- "screen - patient init"#
+tested$why3[tested$why == "I was offered a routine test"] <- "screen - provider init"#
+tested$why3 <- factor(tested$why3, levels = names(table(tested$why3))[order(table(tested$why3), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$where <- factor(NA, levels = unique(c(levels(tested$chtstwh1), levels(tested$chltstwh))))#
+tested$where[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwh1[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))]#
+tested$where[!(tested$chltstwh %in% c("Not applicable", "Not answered"))] <- tested$chltstwh[!(tested$chltstwh %in% c("Not applicable", "Not answered"))]#
+tested$where[tested$where == "NHS Family planning clinic / contraceptive clinic / reproductive health clinic"] <- "NHS FP clinic / contraceptive clinic / reproductive health clinic"#
+tested$where <- droplevels(tested$where)#
+#
+tested$where2 <- NA#
+tested$where2[tested$where == "Sexual health clinic (GUM clinic)"] <- "sexual health"#
+tested$where2[tested$where == "General practice (GP) surgery"] <- "GP"#
+tested$where2[tested$where == "NHS FP clinic / contraceptive clinic / reproductive health clinic"] <- "family planning"#
+tested$where2[tested$where == "School / college / university"] <- "education"#
+tested$where2[tested$where %in% c("Ante-natal Clinic / midwife", "Private non-NHS clinics or doctor", "Youth advisory clinic (e.g. Brook Clinic)", "Termination of pregnancy (abortion) clinic", "Hospital accident and emergency (A&E) department", "Pharmacy / chemist", "Internet", "Other non-health care place, e.g. youth club, festival, bar", "Somewhere else")] <- "elsewhere"#
+#
+tested$where2 <- factor(tested$where2, levels = names(table(tested$where2))[order(table(tested$where2), decreasing=TRUE)], ordered = TRUE)#
+#
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+			design = subset(tdesign, rsex == i & agrp == k & why3 == "screen - provider init")#
+			)))#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen - provider init")#
+				# )))#
+		}#
+	}#
+}
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+			design = subset(tdesign, rsex == i & agrp == k)#
+			)))#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen - provider init")#
+				# )))#
+		}#
+	}#
+}
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+			design = subset(tdesign, rsex == i & agrp == k & why2 != "symptoms")#
+			)))#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen - provider init")#
+				# )))#
+		}#
+	}#
+}
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+			design = subset(tdesign, rsex == i & agrp == k & why2 == "screen")#
+			)))#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen - provider init")#
+				# )))#
+		}#
+	}#
+}
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+			design = subset(tdesign, rsex == i & agrp == k & why2 == "screen - provider init")#
+			)))#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen - provider init")#
+				# )))#
+		}#
+	}#
+}
+for(i in unique(tested$rsex)){#
+	for(k in unique(tested$agrp)){#
+		try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+			design = subset(tdesign, rsex == i & agrp == k & why3 == "screen - provider init")#
+			)))#
+		for(j in unique(tested$where2)){#
+			print(c(i,k,j))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k)#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 != "symptoms")#
+				# )))#
+#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why2 == "screen")#
+				# )))#
+			# try(print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+				# design = subset(tdesign, rsex == i & where2 == j & agrp == k & why3 == "screen - provider init")#
+				# )))#
+		}#
+	}#
+}
+###############################################
+# plots (from csv file)#
+###############################################
+#
+dt <- read.csv("~/Documents/ct_trends/Natsal_symptoms_testing/positivity_by_venue_reason_3.csv")#
+#
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)
+dt
+mtext("Education", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 27.5, adj = 0.5)
+mtext("Education", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 57.5, adj = 0.5)
+###############################################
+# plots (from csv file)#
+###############################################
+#
+dt <- read.csv("~/Documents/ct_trends/Natsal_symptoms_testing/positivity_by_venue_reason_3.csv")#
+#
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("Education", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("Education", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 12.5, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 37.5, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,24), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(26,49), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.015,0.05),#
+	col = 2:5,#
+	pch = 1, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("Education", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("Education", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 12.5, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 37.5, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,54), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.015,0.05),#
+	col = 2:5,#
+	pch = 1, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("Education", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("Education", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.015,0.05),#
+	col = 2:5,#
+	pch = 1, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)
+lines(c(1, 29), c(0.031, 0.031))
+lines(c(1, 29), 100*c(0.031, 0.031))
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)
+lines(c(1, 29), 100*c(0.023, 0.023))
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("Education", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("Education", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("FP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("SH", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("All venues", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.015,0.05),#
+	col = 2:5,#
+	pch = 1, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+# Analysis of Natsal data to compare positivity among non-symptomatic testers with population prevalence.#
+#
+rm(list=ls())#
+#
+library(foreign)#
+library(survey)#
+library(vcd)#
+#
+source("/Users/Joanna/Documents/ct_trends/Natsal_symptoms_testing/my_barplot.R")#
+#
+natsal3 <- read.dta("~/Documents/Natsal-3/UKDA-7799-stata11/stata11/eul_natsal_2010_for_archive.dta")
+#################################
+# analysis on people who were tested for chlamydia#
+#################################
+#
+# to be included in the subset tested for chlamydia in the last year, participants had to be:#
+# sexually active (hetlife > 0 or samlife > 0)#
+# aged < 45 (otherwise, were not asked whether they had tested)#
+# EITHER diagnosed within the last year, OR reported testing within the last year#
+tested <- natsal3[natsal3$hetlife >0 | natsal3$samlife > 0,]#
+tested <- tested[tested$dage < 45,]#
+tested <- tested[(tested$whnchlam == "Less than 1 year ago") | (tested$chlmtest == "Yes"),]#
+#
+##### restrict to 16-24-year-olds#
+tested <- tested[tested$agrp == "16-24",]#
+#
+tested$why <- factor(NA, levels = levels(tested$chtstwy1))#
+tested$why[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwy1[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))]#
+tested$why[!(tested$chltstwy %in% c("Not applicable", "Not answered"))] <- tested$chltstwy[!(tested$chltstwy %in% c("Not applicable", "Not answered"))]#
+tested$why <- droplevels(tested$why)#
+#
+tested$why2 <- NA#
+tested$why2[tested$why == "I had symptoms"] <- "symptoms"#
+tested$why2[tested$why %in% c("My partner had symptoms", "I was notified because a partner was diagnosed with Chlamydia")] <- "partner"#
+tested$why2[tested$why == "Check up after previous positive test"] <- "re-test"#
+tested$why2[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia", "I was offered a routine test")] <- "screen"#
+tested$why2[tested$why == "Other"] <- "other"#
+tested$why2 <- factor(tested$why2, levels = names(table(tested$why2))[order(table(tested$why2), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$why3 <- tested$why2#
+tested$why3[tested$why2 %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia")] <- "screen - patient init"#
+tested$why3[tested$why2 == "I was offered a routine test"] <- "screen - provider init"#
+tested$why3 <- factor(tested$why3, levels = names(table(tested$why3))[order(table(tested$why3), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$where <- factor(NA, levels = unique(c(levels(tested$chtstwh1), levels(tested$chltstwh))))#
+tested$where[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwh1[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))]#
+tested$where[!(tested$chltstwh %in% c("Not applicable", "Not answered"))] <- tested$chltstwh[!(tested$chltstwh %in% c("Not applicable", "Not answered"))]#
+tested$where[tested$where == "NHS Family planning clinic / contraceptive clinic / reproductive health clinic"] <- "NHS FP clinic / contraceptive clinic / reproductive health clinic"#
+tested$where <- droplevels(tested$where)#
+#
+tested$where2 <- NA#
+tested$where2[tested$where == "Sexual health clinic (GUM clinic)"] <- "sexual health"#
+tested$where2[tested$where == "General practice (GP) surgery"] <- "GP"#
+tested$where2[tested$where == "NHS FP clinic / contraceptive clinic / reproductive health clinic"] <- "family planning"#
+tested$where2[tested$where == "School / college / university"] <- "education"#
+tested$where2[tested$where %in% c("Ante-natal Clinic / midwife", "Private non-NHS clinics or doctor", "Youth advisory clinic (e.g. Brook Clinic)", "Termination of pregnancy (abortion) clinic", "Hospital accident and emergency (A&E) department", "Pharmacy / chemist", "Internet", "Other non-health care place, e.g. youth club, festival, bar", "Somewhere else")] <- "elsewhere"#
+#
+tested$where2 <- factor(tested$where2, levels = names(table(tested$where2))[order(table(tested$where2), decreasing=TRUE)], ordered = TRUE)#
+#
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)
+venue_reason_table_m <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )
+venue_reason_table_f <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Female"), Ntotal = 1  )
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 5), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)
+tested$why3 <- tested$why2#
+tested$why3[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia")] <- "screen - patient init"#
+tested$why3[tested$why == "I was offered a routine test"] <- "screen - provider init"#
+tested$why3 <- factor(tested$why3, levels = names(table(tested$why3))[order(table(tested$why3), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$where <- factor(NA, levels = unique(c(levels(tested$chtstwh1), levels(tested$chltstwh))))#
+tested$where[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwh1[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))]#
+tested$where[!(tested$chltstwh %in% c("Not applicable", "Not answered"))] <- tested$chltstwh[!(tested$chltstwh %in% c("Not applicable", "Not answered"))]#
+tested$where[tested$where == "NHS Family planning clinic / contraceptive clinic / reproductive health clinic"] <- "NHS FP clinic / contraceptive clinic / reproductive health clinic"#
+tested$where <- droplevels(tested$where)#
+#
+tested$where2 <- NA#
+tested$where2[tested$where == "Sexual health clinic (GUM clinic)"] <- "sexual health"#
+tested$where2[tested$where == "General practice (GP) surgery"] <- "GP"#
+tested$where2[tested$where == "NHS FP clinic / contraceptive clinic / reproductive health clinic"] <- "family planning"#
+tested$where2[tested$where == "School / college / university"] <- "education"#
+tested$where2[tested$where %in% c("Ante-natal Clinic / midwife", "Private non-NHS clinics or doctor", "Youth advisory clinic (e.g. Brook Clinic)", "Termination of pregnancy (abortion) clinic", "Hospital accident and emergency (A&E) department", "Pharmacy / chemist", "Internet", "Other non-health care place, e.g. youth club, festival, bar", "Somewhere else")] <- "elsewhere"#
+#
+tested$where2 <- factor(tested$where2, levels = names(table(tested$where2))[order(table(tested$where2), decreasing=TRUE)], ordered = TRUE)#
+#
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)#
+venue_reason_table_m <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )#
+#mosaic(venue_reason_table_m)#
+#
+venue_reason_table_f <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Female"), Ntotal = 1  )#
+#mosaic(venue_reason_table_f)
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 5), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_f)) / rep(apply(t(as.matrix(venue_reason_table_f)), 2, sum), each = 5), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Female"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Women (16-24 years)", axes = FALSE#
+	)#
+mtext("Women (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol=5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 5), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+venue_reason_table_m <- svytable(~ where2 + why2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 5), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)#
+venue_reason_table_m <- svytable(~ where2 + why2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )
+venue_reason_table_m
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)#
+venue_reason_table_m <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )
+venue_reason_table_m
+table(tested$why3)
+tested$why3 <- tested$why2
+tested$why3[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia")] <- "screen - patient init"
+tested$why3 <- as.character(tested$why2)
+tested$why3[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia")] <- "screen - patient init"
+tested$why3[tested$why == "I was offered a routine test"] <- "screen - provider init"
+tested$why3 <- factor(tested$why3, levels = names(table(tested$why3))[order(table(tested$why3), decreasing=TRUE)], ordered = TRUE)
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)
+venue_reason_table_m <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )
+venue_reason_table_m
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 5), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)
+# Analysis of Natsal data to compare positivity among non-symptomatic testers with population prevalence.#
+#
+rm(list=ls())#
+#
+library(foreign)#
+library(survey)#
+library(vcd)#
+#
+source("/Users/Joanna/Documents/ct_trends/Natsal_symptoms_testing/my_barplot.R")#
+#
+natsal3 <- read.dta("~/Documents/Natsal-3/UKDA-7799-stata11/stata11/eul_natsal_2010_for_archive.dta")#
+#
+#################################
+# analysis on people who were tested for chlamydia#
+#################################
+#
+# to be included in the subset tested for chlamydia in the last year, participants had to be:#
+# sexually active (hetlife > 0 or samlife > 0)#
+# aged < 45 (otherwise, were not asked whether they had tested)#
+# EITHER diagnosed within the last year, OR reported testing within the last year#
+tested <- natsal3[natsal3$hetlife >0 | natsal3$samlife > 0,]#
+tested <- tested[tested$dage < 45,]#
+tested <- tested[(tested$whnchlam == "Less than 1 year ago") | (tested$chlmtest == "Yes"),]#
+#
+##### restrict to 16-24-year-olds#
+tested <- tested[tested$agrp == "16-24",]#
+#
+tested$why <- factor(NA, levels = levels(tested$chtstwy1))#
+tested$why[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwy1[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))]#
+tested$why[!(tested$chltstwy %in% c("Not applicable", "Not answered"))] <- tested$chltstwy[!(tested$chltstwy %in% c("Not applicable", "Not answered"))]#
+tested$why <- droplevels(tested$why)#
+#
+tested$why2 <- NA#
+tested$why2[tested$why == "I had symptoms"] <- "symptoms"#
+tested$why2[tested$why %in% c("My partner had symptoms", "I was notified because a partner was diagnosed with Chlamydia")] <- "partner"#
+tested$why2[tested$why == "Check up after previous positive test"] <- "re-test"#
+tested$why2[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia", "I was offered a routine test")] <- "screen"#
+tested$why2[tested$why == "Other"] <- "other"#
+tested$why2 <- factor(tested$why2, levels = names(table(tested$why2))[order(table(tested$why2), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$why3 <- as.character(tested$why2)#
+tested$why3[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia")] <- "screen - patient init"#
+tested$why3[tested$why == "I was offered a routine test"] <- "screen - provider init"#
+tested$why3 <- factor(tested$why3, levels = names(table(tested$why3))[order(table(tested$why3), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$where <- factor(NA, levels = unique(c(levels(tested$chtstwh1), levels(tested$chltstwh))))#
+tested$where[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwh1[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))]#
+tested$where[!(tested$chltstwh %in% c("Not applicable", "Not answered"))] <- tested$chltstwh[!(tested$chltstwh %in% c("Not applicable", "Not answered"))]#
+tested$where[tested$where == "NHS Family planning clinic / contraceptive clinic / reproductive health clinic"] <- "NHS FP clinic / contraceptive clinic / reproductive health clinic"#
+tested$where <- droplevels(tested$where)#
+#
+tested$where2 <- NA#
+tested$where2[tested$where == "Sexual health clinic (GUM clinic)"] <- "sexual health"#
+tested$where2[tested$where == "General practice (GP) surgery"] <- "GP"#
+tested$where2[tested$where == "NHS FP clinic / contraceptive clinic / reproductive health clinic"] <- "family planning"#
+tested$where2[tested$where == "School / college / university"] <- "education"#
+tested$where2[tested$where %in% c("Ante-natal Clinic / midwife", "Private non-NHS clinics or doctor", "Youth advisory clinic (e.g. Brook Clinic)", "Termination of pregnancy (abortion) clinic", "Hospital accident and emergency (A&E) department", "Pharmacy / chemist", "Internet", "Other non-health care place, e.g. youth club, festival, bar", "Somewhere else")] <- "elsewhere"#
+#
+tested$where2 <- factor(tested$where2, levels = names(table(tested$where2))[order(table(tested$where2), decreasing=TRUE)], ordered = TRUE)#
+#
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)#
+venue_reason_table_m <- svytable(~ where2 + why2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )#
+#mosaic(venue_reason_table_m)#
+#
+venue_reason_table_f <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Female"), Ntotal = 1  )#
+#mosaic(venue_reason_table_f)
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6)
+as.matrix(venue_reason_table_m))
+t(as.matrix(venue_reason_table_m))
+rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6)
+venue_reason_table_m <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_f)) / rep(apply(t(as.matrix(venue_reason_table_f)), 2, sum), each = 5), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Female"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Women (16-24 years)", axes = FALSE#
+	)#
+mtext("Women (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol=5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_f)) / rep(apply(t(as.matrix(venue_reason_table_f)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Female"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Women (16-24 years)", axes = FALSE#
+	)#
+mtext("Women (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol=5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_f)) / rep(apply(t(as.matrix(venue_reason_table_f)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Female"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Women (16-24 years)", axes = FALSE#
+	)#
+mtext("Women (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol=5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+table(tested$where2, tested$why2, tested$rsex)
+table(tested$where2, tested$why3, tested$rsex)
+cols <- wes_palette("IsleofDogs1") # 6 colours
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_f)) / rep(apply(t(as.matrix(venue_reason_table_f)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Female"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Women (16-24 years)", axes = FALSE#
+	)#
+mtext("Women (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol=5, pch = 15, col = cols, legend = levels(tested$why2), bg='white')
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 6, pch = 15, col = cols, legend = levels(tested$why3), bg='white')
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+#cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+cols <- wes_palette("IsleofDogs1") # 6 colours#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 3, pch = 15, col = cols, legend = levels(tested$why3), bg='white')
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 2, pch = 15, col = cols, legend = levels(tested$why3), bg='white')
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+#cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+cols <- wes_palette("IsleofDogs1") # 6 colours#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 3, pch = 15, col = cols, legend = levels(tested$why3), bg='white')#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_f)) / rep(apply(t(as.matrix(venue_reason_table_f)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Female"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Women (16-24 years)", axes = FALSE#
+	)#
+mtext("Women (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.03, 0.03), ncol = 3, pch = 15, col = cols, legend = levels(tested$why3), bg='white')
+###################
+# nicer-looking plots#
+###################
+#
+quartz(width=14, height=7)#
+par(mfrow = c(1,2))#
+#
+#cols <- wes_palette(n=5, name="FantasticFox1")#
+#cols <- c(rgb(202,86,112, maxColorValue = 256), rgb(114,165,85, maxColorValue = 256), rgb(171,98,192, maxColorValue = 256), rgb(197,124,60, maxColorValue = 256), rgb(99,140,204, maxColorValue = 256))#
+#cols <- c(rgb(0,169,189, maxColorValue = 256), rgb(255,54,99, maxColorValue = 256), rgb(76,62,193, maxColorValue = 256), rgb(106,163,0, maxColorValue = 256), rgb(129,62,70, maxColorValue = 256))#
+cols <- wes_palette("IsleofDogs1") # 6 colours#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_m)) / rep(apply(t(as.matrix(venue_reason_table_m)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Male"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Men (16-24 years)", axes=FALSE#
+	)#
+mtext("Men (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.01, 0.01), ncol = 3, pch = 15, col = cols, legend = levels(tested$why3), bg='white')#
+my_barplot(#
+	height = t(as.matrix(venue_reason_table_f)) / rep(apply(t(as.matrix(venue_reason_table_f)), 2, sum), each = 6), #
+	width = svytable(~ where2, design=subset(tdesign, rsex == "Female"), Ntotal = 1 ),#
+	horiz = TRUE, beside = FALSE, space = 0, col = cols,#
+	xlim=c(0,1), ylim=c(0,1), #
+	main = "Women (16-24 years)", axes = FALSE#
+	)#
+mtext("Women (16-24 years)", 3, line=1.5, cex=1.5)#
+axis(1); mtext('Reason for test', 1, line=2)#
+axis(2); mtext('Test venue', 2, line=2)#
+#
+legend('bottomleft', inset = c(0.01, 0.01), ncol = 3, pch = 15, col = cols, legend = levels(tested$why3), bg='white')
+venue_reason_table_m <- svytable(~ where2 + why3, design=subset(tdesign, rsex == "Male"), Ntotal = 1 )
+venue_reason_table_m
+100*venue_reason_table_m
+apply(100*venue_reason_table_m,2,sum)
+apply(100*venue_reason_table_m,1,sum)
+sum(apply(100*venue_reason_table_m,1,sum))
+apply(100*venue_reason_table_m,2,sum)
+sum(apply(100*venue_reason_table_m,2,sum))
+100*venue_reason_table_f
+apply(100*venue_reason_table_f,2,sum)
+sum(apply(100*venue_reason_table_f,2,sum))
+apply(100*venue_reason_table_f,1,sum)
+# Analysis of Natsal data to compare positivity among non-symptomatic testers with population prevalence.#
+#
+rm(list=ls())#
+#
+library(foreign)#
+library(survey)#
+#
+natsal3 <- read.dta("~/Documents/Natsal-3/UKDA-7799-stata11/stata11/eul_natsal_2010_for_archive.dta")#
+#
+#################################
+# analysis on people who were tested for chlamydia#
+#################################
+#
+# to be included in the subset tested for chlamydia in the last year, participants had to be:#
+# sexually active (hetlife > 0 or samlife > 0)#
+# aged < 45 (otherwise, were not asked whether they had tested)#
+# EITHER diagnosed within the last year, OR reported testing within the last year#
+tested <- natsal3[natsal3$hetlife >0 | natsal3$samlife > 0,]#
+tested <- tested[tested$dage < 45,]#
+tested <- tested[(tested$whnchlam == "Less than 1 year ago") | (tested$chlmtest == "Yes"),]#
+#
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)#
+#
+# proportion of those tested in the last year who were infected#
+svyciprop(~(whnchlam == "Less than 1 year ago"),#
+	design = tdesign#
+	)#
+#
+svyciprop(~(whnchlam == "Less than 1 year ago"),#
+	design = subset(tdesign, rsex == "Male")#
+	)#
+svyciprop(~(whnchlam == "Less than 1 year ago"),#
+	design = subset(tdesign, rsex == "Female")#
+	)#
+for(i in unique(tested$rsex)){#
+	for(j in unique(tested$agrp)){#
+		print(c(i,j))#
+		print(svyciprop(~(whnchlam == "Less than 1 year ago"),#
+			design = subset(tdesign, rsex == i & agrp == j)#
+			))#
+	}#
+}
+###############################################
+# plots (from csv file)#
+###############################################
+#
+dt <- read.csv("~/Documents/ct_trends/Natsal_symptoms_testing/positivity_by_venue_reason_3.csv")#
+#
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)
+dt
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)
+legend('topleft', inset = c(0.015,0.05),#
+	col = 2:5,#
+	pch = 1, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+	pch = 1, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)
+###############################################
+# plots (from csv file)#
+###############################################
+#
+dt <- read.csv("~/Documents/ct_trends/Natsal_symptoms_testing/positivity_by_venue_reason_3.csv")#
+#
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+	pch = 1, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, pch = dt$subset - 1, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, pch = dt$Subset - 1, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, pch = dt$Subset, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, pch = as.numeric(dt$Subset), xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, pch = as.numeric(dt$Subset)-1, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+	pch = 1:4, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, #col = dt$Subset, #
+pch = as.numeric(dt$Subset)-1, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+	pch = 1:4, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+###############################################
+# plots (from csv file)#
+###############################################
+#
+dt <- read.csv("~/Documents/ct_trends/Natsal_symptoms_testing/positivity_by_venue_reason_3.csv")#
+#
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, #col = dt$Subset, #
+pch = as.numeric(dt$Subset)-1, xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+#	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+	pch = 1:4, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, #
+#pch = as.numeric(dt$Subset)-1,#
+xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+	pch = 1:4, lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, #
+#pch = as.numeric(dt$Subset)-1,#
+xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+#	pch = 1:4, #
+	lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, #
+#pch = as.numeric(dt$Subset)-1,#
+xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Women", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Men", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+	pch = 1, #
+	lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"))
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = subset(tdesign, rsex == "Male" & agrp == "16-24")#
+	)
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = subset(tdesign, rsex == "Male")#
+	)
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = tdesign, rsex == "Male"#
+	)
+# Analysis of Natsal data to compare positivity among non-symptomatic testers with population prevalence.#
+#
+rm(list=ls())#
+#
+library(foreign)#
+library(survey)#
+#
+natsal3 <- read.dta("~/Documents/Natsal-3/UKDA-7799-stata11/stata11/eul_natsal_2010_for_archive.dta")#
+#
+#################################
+# analysis on people who were tested for chlamydia#
+#################################
+#
+# to be included in the subset tested for chlamydia in the last year, participants had to be:#
+# sexually active (hetlife > 0 or samlife > 0)#
+# aged < 45 (otherwise, were not asked whether they had tested)#
+# EITHER diagnosed within the last year, OR reported testing within the last year#
+tested <- natsal3[natsal3$hetlife >0 | natsal3$samlife > 0,]#
+tested <- tested[tested$dage < 45,]#
+tested <- tested[(tested$whnchlam == "Less than 1 year ago") | (tested$chlmtest == "Yes"),]#
+#
+##### restrict to 16-24-year-olds#
+#tested <- tested[tested$agrp == "16-24",]#
+#
+tested$why <- factor(NA, levels = levels(tested$chtstwy1))#
+tested$why[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwy1[!(tested$chtstwy1 %in% c("Not applicable", "Not answered"))]#
+tested$why[!(tested$chltstwy %in% c("Not applicable", "Not answered"))] <- tested$chltstwy[!(tested$chltstwy %in% c("Not applicable", "Not answered"))]#
+tested$why <- droplevels(tested$why)#
+#
+tested$why2 <- NA#
+tested$why2[tested$why == "I had symptoms"] <- "symptoms"#
+tested$why2[tested$why %in% c("My partner had symptoms", "I was notified because a partner was diagnosed with Chlamydia")] <- "partner"#
+tested$why2[tested$why == "Check up after previous positive test"] <- "re-test"#
+tested$why2[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia", "I was offered a routine test")] <- "screen"#
+tested$why2[tested$why == "Other"] <- "other"#
+tested$why2 <- factor(tested$why2, levels = names(table(tested$why2))[order(table(tested$why2), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$why3 <- as.character(tested$why2)#
+tested$why3[tested$why %in% c("I wanted a general sexual health check-up", "I had no symptoms but I was worried about the risk of Chlamydia")] <- "screen - patient init"#
+tested$why3[tested$why == "I was offered a routine test"] <- "screen - provider init"#
+tested$why3 <- factor(tested$why3, levels = names(table(tested$why3))[order(table(tested$why3), decreasing=TRUE)], ordered = TRUE)#
+#
+tested$where <- factor(NA, levels = unique(c(levels(tested$chtstwh1), levels(tested$chltstwh))))#
+tested$where[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))] <- tested$chtstwh1[!(tested$chtstwh1 %in% c("Not applicable", "Not answered"))]#
+tested$where[!(tested$chltstwh %in% c("Not applicable", "Not answered"))] <- tested$chltstwh[!(tested$chltstwh %in% c("Not applicable", "Not answered"))]#
+tested$where[tested$where == "NHS Family planning clinic / contraceptive clinic / reproductive health clinic"] <- "NHS FP clinic / contraceptive clinic / reproductive health clinic"#
+tested$where <- droplevels(tested$where)#
+#
+tested$where2 <- NA#
+tested$where2[tested$where == "Sexual health clinic (GUM clinic)"] <- "sexual health"#
+tested$where2[tested$where == "General practice (GP) surgery"] <- "GP"#
+tested$where2[tested$where == "NHS FP clinic / contraceptive clinic / reproductive health clinic"] <- "family planning"#
+tested$where2[tested$where == "School / college / university"] <- "education"#
+tested$where2[tested$where %in% c("Ante-natal Clinic / midwife", "Private non-NHS clinics or doctor", "Youth advisory clinic (e.g. Brook Clinic)", "Termination of pregnancy (abortion) clinic", "Hospital accident and emergency (A&E) department", "Pharmacy / chemist", "Internet", "Other non-health care place, e.g. youth club, festival, bar", "Somewhere else")] <- "elsewhere"#
+#
+tested$where2 <- factor(tested$where2, levels = names(table(tested$where2))[order(table(tested$where2), decreasing=TRUE)], ordered = TRUE)#
+#
+# set up survey design#
+tdesign <- svydesign( #
+		id = ~psu_scrm , #
+		strata = ~stratagrp3 ,#
+		data = tested ,		#
+		weight = ~total_wt #
+	)
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = tdesign, rsex == "Male"#
+	)
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = tdesign#
+	)
+svytable(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = tdesign#
+	)
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = tdesign#
+	)
+svytable(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = subset(tdesign, rsex == "Male")#
+	)
+svytable(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = subset(tdesign, rsex == "Male" & agrp == "16-24")#
+	)
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = subset(tdesign, rsex == "Male" & agrp == "16-24")#
+	)
+svychisq(~(tested$whnchlam == "Less than 1 year ago") + (tested$why2 == "symptoms"),#
+	design = subset(tdesign, rsex == "Male" & agrp == "16-24")#
+	)
+svychisq(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = subset(tdesign, rsex == "Male" & agrp == "16-24")#
+	)
+svychisq(~whnchlam + why2 ),#
+	design = subset(tdesign, rsex == "Male" & agrp == "16-24")#
+	)
+svychisq(~whnchlam + why2 ,#
+	design = subset(tdesign, rsex == "Male" & agrp == "16-24")#
+	)
+svytable(~(whnchlam == "Less than 1 year ago") + (why2 == "symptoms"),#
+	design = subset(tdesign, rsex == "Male" & agrp == "16-24")#
+	)
+svychisq(~eval(whnchlam == "Less than 1 year ago") + eval(why2 == "symptoms"),#
+	design = tdesign#
+	)
+td2 <- update(tdesign, diag = (whnchlam == "Less than 1 year ago"), symptoms = (why2 == "symptoms"))
+svychisq(~diag + symptoms,#
+	design = td2#
+	)
+td2 <- update(tdesign, diag = (whnchlam == "Less than 1 year ago"), symptoms = (why2 == "symptoms"))#
+svychisq(~diag + symptoms,#
+ 	design = subset(td2, rsex == "Male")#
+ 	)
+svychisq(~diag + symptoms,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Male")#
+ 	)
+svychisq(~diag + symptoms,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Feale")#
+ 	)
+svychisq(~diag + symptoms,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Female")#
+ 	)
+td2 <- update(tdesign, diag = (whnchlam == "Less than 1 year ago"), symptoms = (why2 == "symptoms"), screen = (why2 =="screen"))
+svychisq(~diag + screen,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Male")#
+ 	)
+svychisq(~diag + screen,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Female")#
+ 	)
+svychisq(~diag + screen,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Male" & !symptoms)#
+ 	)
+svychisq(~diag + screen,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Female" & !symptoms)#
+ 	)
+svychisq(~diag + why3,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Male" & screen)#
+ 	)
+svychisq(~diag + why3,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Female" & screen)#
+ 	)
+svytable(~diag + why3,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Male" & screen)#
+ 	)
+td2 <- update(tdesign, diag = (whnchlam == "Less than 1 year ago"), symptoms = (why2 == "symptoms"), screen = (why2 =="screen"), provider_init = (why3 == "screen - provider init"))
+svychisq(~diag + provider_init,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Male" & screen)#
+ 	)
+svychisq(~diag + provider_init,#
+ 	design = subset(td2, agrp == "16-24" & rsex == "Female" & screen)#
+ 	)
+###############################################
+# plots (from csv file)#
+###############################################
+#
+dt <- read.csv("~/Documents/ct_trends/Natsal_symptoms_testing/positivity_by_venue_reason_3.csv")#
+#
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, #
+#pch = as.numeric(dt$Subset)-1,#
+xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("All venues", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 12.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("All venues", side=1, line=1, at = 32.5, adj = 0.5)#
+mtext("Sexual Health", side=1, line=1, at = 37.5, adj = 0.5)#
+mtext("GP", side=1, line=1, at = 42.5, adj = 0.5)#
+mtext("Education", side=1, line=1, at = 47.5, adj = 0.5)#
+mtext("Family Planning", side=1, line=1, at = 52.5, adj = 0.5)#
+mtext("Elsewhere", side=1, line=1, at = 57.5, adj = 0.5)#
+#
+mtext("Men", side=1, line=3, at = 15, adj = 0.5)#
+mtext("Women", side=1, line=3, at = 45, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,29), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(31,59), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.15,0.05),#
+	col = 2:5,#
+	pch = 1, #
+	lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 29), 100*c(0.031, 0.031))#
+lines(c(1, 29), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 29), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(31, 59), 100*c(0.023, 0.023))#
+lines(c(31, 59), 100*c(0.015, 0.015), lty=2)#
+lines(c(31, 59), 100*c(0.034, 0.034), lty=2)
+for(j in unique(tested$where2)){#
+	print(j)#
+#
+	svychisq(~diag + symptoms,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)#
+	svychisq(~diag + symptoms,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)#
+	svychisq(~diag + screen,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)#
+	svychisq(~diag + screen,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)#
+	svychisq(~diag + provider_init,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)#
+	svychisq(~diag + provider_init,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)#
+#
+}
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	svychisq(~diag + symptoms,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)#
+	svychisq(~diag + symptoms,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)#
+	svychisq(~diag + screen,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)#
+	svychisq(~diag + screen,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)#
+	svychisq(~diag + provider_init,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)#
+	svychisq(~diag + provider_init,#
+	 	design = subset(td2, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)#
+#
+}
+j
+j <- "GP"
+print(j)
+tdtemp <- update(td2, loc = (where2==j))
+svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)#
+	svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)#
+	svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)#
+	svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)#
+	svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)#
+	svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)#
+#
+}
+j
+j <- "GP"
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	))#
+	svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)#
+	svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)#
+	svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)#
+	svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)#
+	svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)#
+#
+}
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	))#
+	print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	))#
+	print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	))#
+	print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	))#
+	print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	))#
+	print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	))#
+#
+}
+j
+tdtemp <- update(td2, loc = (where2==j))
+svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)
+svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j),#
+	 	na.rm=FALSE)
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)))#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)))#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)))#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)))#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)))#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)))#
+#
+}
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)))#
+	svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	))#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)))#
+	svytable(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)))#
+	svytable(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)))#
+	svytable(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)))#
+	svytable(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)))#
+#
+}
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)))#
+	svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)))#
+	svytable(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)))#
+	svytable(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)))#
+	svytable(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)))#
+	svytable(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)))#
+#
+}
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	print(svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	))#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)))#
+	svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)))#
+	svytable(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)))#
+	svytable(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)))#
+	svytable(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)))#
+	svytable(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)))#
+#
+}
+for(j in unique(tested$where2)){#
+	print(j)#
+	tdtemp <- update(td2, loc = (where2==j))#
+#
+	print(svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	))#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & where2 == j)#
+	 	)))#
+	print(svytable(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	))#
+	try(print(svychisq(~diag + symptoms,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & where2 == j)#
+	 	)))#
+	print(svytable(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	))#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & !symptoms & where2 == j)#
+	 	)))#
+	print(svytable(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	))#
+	try(print(svychisq(~diag + screen,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & !symptoms & where2 == j)#
+	 	)))#
+	print(svytable(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	))#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Male" & screen & where2 == j)#
+	 	)))#
+	print(svytable(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	))#
+	try(print(svychisq(~diag + provider_init,#
+	 	design = subset(tdtemp, agrp == "16-24" & rsex == "Female" & screen & where2 == j)#
+	 	)))#
+#
+}
+rm(list=ls())
+ls()
+source("/Users/Joanna/Documents/M_Genitalium/data/Cohen/read_cohen.R")
+head(allfup)
+kormain <- read.sas7bdat('~/Documents/M_Genitalium/data/Cohen/kormain.sas7bdat')
+head(kormain)
+nrow(kormain)
+names(allfup)
+sort(names(allfup))
+drat:::add("mrc-ide")
+install.packages(c("odin", "dde"))
+dt <- read.csv("~/Documents/ct_trends/Natsal_symptoms_testing/positivity_by_nonocong_1.csv")#
+#
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, #
+	#pch = as.numeric(dt$Subset)-1,#
+	xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("0", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("1", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("2+", side=1, line=1, at = 12.5, adj = 0.5)#
+#
+mtext("0", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("1", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("2+", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("Men", side=1, line=3, at = 7.5, adj = 0.5)#
+mtext("Women", side=1, line=3, at = 22.5, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,14), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(16,29), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.01,0.05),#
+	col = 2:5,#
+	pch = 1, #
+	lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 14), 100*c(0.031, 0.031))#
+lines(c(1, 14), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 14), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(16, 29), 100*c(0.023, 0.023))#
+lines(c(16, 29), 100*c(0.015, 0.015), lty=2)#
+lines(c(16, 29), 100*c(0.034, 0.034), lty=2)
+lines(c(1, 4),c(0.3, 0.3))
+polygon(c(1,4,4,1), c(0.1,0.1,1.3,1.3), col=rgb(0,0,0,0.01), border=NA)
+polygon(c(1,4,4,1), c(0.1,0.1,1.3,1.3), col=rgb(0,0,0,0.1), border=NA)
+lines(c(6, 9), c(1.7, 1.7))
+polygon(c(6,9,9,6), c(0.8,0.8,3.6,3.6), col=rgb(0,0,0,0.01), border=NA)
+polygon(c(6,9,9,6), c(0.8,0.8,3.6,3.6), col=rgb(0,0,0,0.1), border=NA)
+lines(c(11, 14),c(6.5, 6.5))
+polygon(c(11,14,14,11), c(3.9,3.9,10.9,10.9), col=rgb(0,0,0,0.01), border=NA)
+polygon(c(11,14,14,11), c(3.9,3.9,10.9,10.9), col=rgb(0,0,0,0.1), border=NA)
+lines(c(16, 19),c(2.9, 2.9))#
+polygon(c(16,19,19,16), c(1.2,1.2,7.1,7.1), col=rgb(0,0,0,0.1), border=NA)#
+#
+lines(c(20, 23), c(2.2, 2.2))#
+polygon(c(20,23,23,20), c(1.4,1.4,3.6,3.6), col=rgb(0,0,0,0.1), border=NA)#
+#
+lines(c(25, 28),c(6.3, 6.3))#
+polygon(c(25,28,28,25), c(3.5,3.5,11.2,11.2), col=rgb(0,0,0,0.1), border=NA)
+quartz(width=18, height=6)#
+plot(dt$X, 100*dt$Estimate, col = dt$Subset, #
+	#pch = as.numeric(dt$Subset)-1,#
+	xaxt = 'n', ylim=c(0,25), xlab = "", ylab = "Percentage")#
+#
+arrows(dt$X,#
+	y0 = 100*dt$X2.5, y1 = 100*dt$X97.5,#
+	col = dt$Subset,#
+	code = 3, angle = 90, length = 0.05#
+	)#
+mtext("0", side=1, line=1, at = 2.5, adj = 0.5)#
+mtext("1", side=1, line=1, at = 7.5, adj = 0.5)#
+mtext("2+", side=1, line=1, at = 12.5, adj = 0.5)#
+#
+mtext("0", side=1, line=1, at = 17.5, adj = 0.5)#
+mtext("1", side=1, line=1, at = 22.5, adj = 0.5)#
+mtext("2+", side=1, line=1, at = 27.5, adj = 0.5)#
+#
+mtext("Men", side=1, line=3, at = 7.5, adj = 0.5)#
+mtext("Women", side=1, line=3, at = 22.5, adj = 0.5)#
+#
+axis(side = 1, line = 2.5, at = c(1,14), labels = FALSE, tcl=0)#
+axis(side = 1, line = 2.5, at = c(16,29), labels = FALSE, tcl=0)#
+#
+legend('topleft', inset = c(0.01,0.05),#
+	col = 2:5,#
+	pch = 1, #
+	lty = 1,#
+	legend = c("All tested", "Reported NOT symptoms as reason for test", "Reported screening as reason for test", "Reported provider-initiated screening as reason for test")#
+	)#
+# lines for population prevalence#
+lines(c(1, 14), 100*c(0.031, 0.031))#
+lines(c(1, 14), 100*c(0.022, 0.022), lty=2)#
+lines(c(1, 14), 100*c(0.043, 0.043), lty=2)#
+#
+lines(c(16, 29), 100*c(0.023, 0.023))#
+lines(c(16, 29), 100*c(0.015, 0.015), lty=2)#
+lines(c(16, 29), 100*c(0.034, 0.034), lty=2)#
+#
+# shading for population prevalence by group#
+lines(c(1, 4),c(0.3, 0.3))#
+polygon(c(1,4,4,1), c(0.1,0.1,1.3,1.3), col=rgb(0,0,0,0.1), border=NA)#
+#
+lines(c(6, 9), c(1.7, 1.7))#
+polygon(c(6,9,9,6), c(0.8,0.8,3.6,3.6), col=rgb(0,0,0,0.1), border=NA)#
+#
+lines(c(11, 14),c(6.5, 6.5))#
+polygon(c(11,14,14,11), c(3.9,3.9,10.9,10.9), col=rgb(0,0,0,0.1), border=NA)#
+#
+lines(c(16, 19),c(2.9, 2.9))#
+polygon(c(16,19,19,16), c(1.2,1.2,7.1,7.1), col=rgb(0,0,0,0.1), border=NA)#
+#
+lines(c(21, 23), c(2.2, 2.2))#
+polygon(c(21,24,24,21), c(1.4,1.4,3.6,3.6), col=rgb(0,0,0,0.1), border=NA)#
+#
+lines(c(26, 29),c(6.3, 6.3))#
+polygon(c(26,29,29,26), c(3.5,3.5,11.2,11.2), col=rgb(0,0,0,0.1), border=NA)
+quatrz()
+quartz()
+plot(seq(0,1,0.01), -log(1-seq(0,1,0.01)), type='l')
+plot(seq(0,1,0.01), -log(1-seq(0,1,0.01)), type='l', xlim=c(0,0.7))
+plot(seq(0,1,0.01), -log(1-seq(0,1,0.01)), type='l', xlim=c(0,0.7), ylim=c(0,1))
+plot(seq(0,1,0.01), -log(1-seq(0,1,0.01)), type='l', xlim=c(0,0.7), ylim=c(0,1.5))
+abline(0,1)
+shiny::runApp(system.file("examples/sis_app.R", package = "odin.ui", mustWork = TRUE))
+shiny::runApp(system.file("examples/sis_app.R", package = "odin.ui", mustWork = TRUE))
+setwd('~/Documents/teaching_etc/StochPractical2018/stochasticity-practical/odin')
+shiny::runApp(system.file("example1.R", package = "odin.ui", mustWork = TRUE))
+drat:::add("mrc-ide")#
+install.packages(c("odin_ui"))
+drat:::add("mrc-ide")#
+install.packages(c("odin.ui"))
+devtools::install_github('mrc-ide/odin.ui')
+devtools::install_github('mrc-ide/odin.ui/tree/prototype')
+devtools::install_github('mrc-ide/odin.ui/tree/prototype', upgrade = FALSE)
+devtools::install_github("mrc-ide/odin.ui@prototype", upgrade = FALSE)
+shiny::runApp(system.file("example1.R", package = "odin.ui", mustWork = TRUE))
+library(odin.ui)
+shiny::runApp(system.file("example1.R", package = "odin.ui", mustWork = TRUE))
+shiny::runApp(system.file("example4.R", package = "odin.ui", mustWork = TRUE))
+shiny::runApp(system.file("examples/sis_app.R", package = "odin.ui", mustWork = TRUE))
+shiny::runApp(system.file("examples/sis_app.R", package = "odin.ui", mustWork = TRUE))
+install.packages(c("Rcpp", "httpuv", "shiny"))
+shiny::runApp(system.file("examples/sis_app.R", package = "odin.ui", mustWork = TRUE))
+install.packages(c("httpuv"))
