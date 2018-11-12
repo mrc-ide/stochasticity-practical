@@ -36,4 +36,6 @@ teaching <- function(path_code, path_docs, default_time,
   shiny::shinyApp(ui, server)
 }
 
-teaching("example1.R", "example1.md", 100)
+teaching("example1.R", "example1.md", 
+         default_time=14
+         )
