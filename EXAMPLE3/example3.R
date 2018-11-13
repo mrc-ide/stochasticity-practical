@@ -11,9 +11,11 @@ output(N_det) <- N0 * exp((r-s)*time)
 # Stochastic implementation with initial condition, number of births in time t to t+dt and then update to next step
 
 initial(N) <- N0
+initial(fade) <- (N0 == 0)
 
 growthAndDeath <- rbinom(N, (r+s)*dt) # How many events happen in total (births and deaths)?
 death <- rbinom(growthAndDeath, s/(r+s)) # How many of these were deaths?
 growth <- growthAndDeath - death
 
 update(N) <- N + growth - death
+update(fade) <- (N == 0)
