@@ -1,4 +1,4 @@
-gen <- odin::odin("odin/example2.R")
+gen <- odin::odin('~/Documents/teaching_etc/StochPractical2018/stochasticity-practical/EXAMPLE2/example2.R')
 mod <- gen()
 
 tt <- seq(0, 14)

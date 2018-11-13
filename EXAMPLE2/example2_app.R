@@ -34,6 +34,9 @@ teaching <- function(path_code, path_docs, default_time,
   }
   
   shiny::shinyApp(ui, server)
+  
 }
 
-teaching("example1.R", "example1.md", 100)
+teaching("example2.R", "example2.md", 14, 
+         extra = list(mean_N = function(x) rowMeans(x$N)) )
+
