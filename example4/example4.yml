@@ -22,5 +22,7 @@ output:
 
 extra:
   extinct: function(x) rowMeans(x$I == 0)
+  
+time_scale: dt
 
 explore_tab: true

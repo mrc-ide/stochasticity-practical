@@ -2,7 +2,7 @@ r <- user(0.005) # Growth rate
 s <- user(0.003) # Death rate
 N0 <- user(1) # Initial number
 
-dt <- 1 
+dt <- 0.01 
 time <- step * dt
 
 # Exact implementation - often unobtainable for non-linear models

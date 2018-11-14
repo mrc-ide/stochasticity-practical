@@ -1,6 +1,6 @@
-beta <- user(0.005) # contact rate
-nu <- user(0.003) # recovery
-mu <- user(0.0000033) # death rate 
+beta <- user(0.5) # contact rate
+nu <- user(0.3) # recovery
+mu <- user(0.00033) # death rate 
 prop_immune <- user(0) # proportion of population initially immune
 
 N <- user(10000)  # total population.
@@ -9,7 +9,7 @@ S0 <- (N-I0)*(1 - prop_immune) # initial susceptibles
 
 I0_at_steady_state <- user(0)
 
-dt <- 1
+dt <- 0.01
 
 ## Steady-state prevelance
 R0 <- beta/( nu + mu )

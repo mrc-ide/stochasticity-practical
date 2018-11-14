@@ -30,4 +30,6 @@ extra:
   mean_R: function(x) rowMeans(x$R)
   percent_fade: function(x) 100*rowMeans(x$I == 0)
 
+time_scale: dt
+
 explore_tab: true
