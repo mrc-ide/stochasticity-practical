@@ -1,6 +1,6 @@
 title: Example 1
 
-default_time: 100
+default_time: 15
 default_replicates: 1
 
 parameters:
