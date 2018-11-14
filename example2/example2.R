@@ -1,8 +1,7 @@
-r <- user(0.005) # growth rate
+r <- user(0.5) # growth rate
 N0 <- user(1)  # initial population.
 
-dt <- 1
-time <- step * dt
+dt <- 0.01
 
 ## Deterministic solution
 output(N_det) <- N0 * exp(r*time)

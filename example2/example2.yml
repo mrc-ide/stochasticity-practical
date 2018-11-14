@@ -16,4 +16,6 @@ output:
 extra:
   mean_N: function(x) rowMeans(x$N_stoch)
 
+time_scale: dt
+
 explore_tab: false
