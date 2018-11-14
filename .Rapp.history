@@ -1,0 +1,599 @@
+setwd('..')
+gen <- odin::odin("odin/example4.R")
+mod <- gen()
+tt <- seq(0, 600)
+yy <- mod$transform_variables(mod$run(tt))
+ls(yy)
+gen <- odin::odin("odin/example2.R")
+gen <- odin::odin("odin/example2.R")
+mod <- gen()
+tt <- seq(0, 14, 0.01)
+yy <- mod$transform_variables(mod$run(tt))
+tt <- seq(0, 14)
+yy <- mod$transform_variables(mod$run(tt))
+ls(yy)
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+gen <- odin::odin("odin/example2.R")#
+mod <- gen()#
+#
+tt <- seq(0, 14)#
+#
+# one stochastic run#
+yy <- mod$transform_variables(mod$run(tt))#
+#
+plot(yy$t, yy$N_det, type='l', lwd=2, xlab = "time", ylab = "N")#
+lines(yy$t, yy$N)
+nsim <- 100
+yy <- mod$transform_variables(mod$run(tt, replicate = nsim))
+matplot(yy$t, yy$I, type = "l", col = "#00000055", lty = 1, lwd = 0.5)
+matplot(yy$t, yy$N, type = "l", col = "#00000055", lty = 1, lwd = 0.5)
+quartz()
+matplot(yy$t, yy$N, type = "l", col = "#00000055", lty = 1, lwd = 0.5)
+lines(yy$t, yy$N[, 1], col = "red", lwd = 2)
+matplot(yy$t, yy$N, type = "l", col = rgb(0,0,0,0.1), lty = 1, lwd = 0.5)
+lines(yy$t, yy$N[, 1], col = "red", lwd = 2)
+matplot(yy$t, yy$N, type = "l", col = rgb(0,0,0,0.1), lty = 1, lwd = 0.5, xlab = "time", ylab = "N")
+lines(yy$t, yy$N[, 1], col = "red", lwd = 2)
+matplot(yy$t, yy$N, type = "l", col = rgb(0,0,0,0.1), lty = 1, lwd = 0.5, xlab = "time", ylab = "N", log='y')
+lines(yy$t, yy$N[, 1], col = "red", lwd = 2)

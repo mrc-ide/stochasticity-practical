@@ -1,0 +1,23 @@
+title: Example 3
+
+default_time: 15
+default_replicates: 1
+
+parameters:
+  N0:
+    range: [0, 100000]
+    description: Initial population size
+  r:
+    description: Birth rate
+  s:
+    description: Death rate
+
+output:
+  exclude: time
+  second_y: extinct
+
+extra:
+  mean_N: function(x) rowMeans(x$N)
+  percent_fade: function(x) 100*rowMeans(x$N == 0)
+
+explore_tab: false
