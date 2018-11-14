@@ -5,7 +5,6 @@ default_replicates: 1
 
 parameters:
   N:
-    range: [10, 1000]
     description: Population size
   beta:
     description: Contact rate

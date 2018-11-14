@@ -21,7 +21,7 @@ initial(I) <- if (I0_at_steady_state > 0) round(I_star) else I0
 initial(S) <- if (I0_at_steady_state > 0) round(S_star) else S0
 initial(R) <- if (I0_at_steady_state > 0) N - round(I_star) - round(S_star) else N - I0 - S0
 
-FOI <- beta * I / N
+FOI <- beta * I / N 
 
 n_events_S <- rbinom(S, (FOI + mu)*dt) # SIR: two types of events for S, so competing hazards. 
 n_deaths_S <- rbinom(n_events_S, mu/(FOI + mu)) # SIR: a fraction of S events are deaths. 
