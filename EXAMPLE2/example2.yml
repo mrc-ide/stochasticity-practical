@@ -1,0 +1,16 @@
+title: Example 2
+
+default_time: 14
+default_replicates: 1
+
+parameters:
+  N0:
+    range: [0, 100000]
+    description: Initial population size
+  r:
+    description: Population growth rate
+
+output:
+  exclude: time
+
+explore_tab: false
