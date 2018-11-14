@@ -12,5 +12,8 @@ parameters:
 
 output:
   exclude: time
+  
+extra:
+  mean_N: function(x) rowMeans(x$N_stoch)
 
 explore_tab: false

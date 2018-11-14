@@ -1,5 +1,5 @@
-beta <- user(0.5) # contact rate
-nu <- user(0.3) # recovery
+beta <- user(0.005) # contact rate
+nu <- user(0.003) # recovery
 N <- user(100)  # total population.
 
 I0_at_steady_state <- user(1)
@@ -9,7 +9,7 @@ I0 <- user(1)
 ## Steady-state prevelance
 I_star <- N * (beta - nu) / beta
 
-dt <- 1 # 0.01
+dt <- 1 
 time <- step * dt
 
 ## Deterministic solution
