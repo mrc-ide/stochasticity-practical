@@ -28,6 +28,6 @@ extra:
   mean_S: function(x) rowMeans(x$S)
   mean_I: function(x) rowMeans(x$I)
   mean_R: function(x) rowMeans(x$R)
-  percent_fade: function(x) 100*rowMeans(x$I == 0)) 
+  percent_fade: function(x) 100*rowMeans(x$I == 0)
 
 explore_tab: true
