@@ -19,7 +19,7 @@ S_star <- N/R0 # SIR: new definition of number of susceptibles at endemic equili
 ## Stochastic solution
 initial(I) <- if (I0_at_steady_state > 0) round(I_star) else I0
 initial(S) <- if (I0_at_steady_state > 0) round(S_star) else S0
-initial(R) <- if (I0_at_steady_state > 0) round(N - I_star - S_star) else N - I0 - S0
+initial(R) <- if (I0_at_steady_state > 0) N - round(I_star) - round(S_star) else N - I0 - S0
 
 FOI <- beta * I / N
 
@@ -31,10 +31,10 @@ n_events_I <- rbinom(I, (nu+mu)*dt ) # SIR: two types of events for I, so compet
 n_deaths_I <- rbinom(I, mu/(mu + nu)) # SIR: a fraction of I events are deaths.
 n_recoveries_I <- n_events_I - n_deaths_I # SIR: ...the rest are recoveries. 
 
-n_deaths_R <- rbinom(N - I - S, mu*dt)
+n_deaths_R <- rbinom(R, mu*dt)
 n_births <- n_deaths_S + n_deaths_I + n_deaths_R
 
 # update for next time step
 update(S) <- S - n_deaths_S - n_infections_S + n_births
 update(I) <- I + n_infections_S - n_recoveries_I - n_deaths_I
-update(R) <- N - S - I
+update(R) <- R + n_recoveries_I - n_deaths_R
