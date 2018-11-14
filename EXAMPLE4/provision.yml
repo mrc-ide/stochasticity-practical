@@ -6,4 +6,4 @@ package_sources:
     - mrc-ide/cinterpolate
     - richfitz/dde
     - mrc-ide/odin
-    - mrc-ide/odin.ui
+    - mrc-ide/odin.ui@prototype
