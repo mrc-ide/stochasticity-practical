@@ -14,5 +14,3 @@ output:
   exclude: time
 
 explore_tab: false
-
-time_scale: dt
