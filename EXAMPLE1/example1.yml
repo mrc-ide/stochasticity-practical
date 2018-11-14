@@ -1,22 +1,16 @@
 title: Example 1
 
 default_time: 100
-default_replicates: 20
+default_replicates: 1
 
 parameters:
-  N:
-    range: [10, 1000]
-    description: Population size
-  beta:
-    description: contact_rate
-  nu:
-    description: recovery rate
+  N0:
+    range: [0, 100000]
+    description: Initial population size
+  r:
+    description: Population growth rate
 
 output:
   exclude: time
-  second_y: extinct
 
-extra:
-  extinct: function(x) rowMeans(x$I == 0)
-
-explore_tab: true
+explore_tab: false
