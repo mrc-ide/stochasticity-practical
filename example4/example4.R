@@ -7,7 +7,7 @@ I0_at_steady_state <- user(1)
 I0 <- user(1)
 
 ## Steady-state prevelance
-I_star <- N * (beta - nu) / beta
+I_star <- if (beta > nu) N * (beta - nu) / beta else 0
 
 dt <- 0.01 
 time <- step * dt
