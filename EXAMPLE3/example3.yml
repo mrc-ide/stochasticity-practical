@@ -18,6 +18,6 @@ output:
 
 extra:
   mean_N: function(x) rowMeans(x$N)
-  percent_fade: function(x) 100*rowMeans(x$N == 0))
+  percent_fade: function(x) 100*rowMeans(x$N == 0)
 
 explore_tab: false
