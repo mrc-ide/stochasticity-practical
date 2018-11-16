@@ -21,6 +21,8 @@ output:
   second_y: extinct
 
 extra:
+  mean_S: function(x) rowMeans(x$S)
+  mean_I: function(x) rowMeans(x$I)
   extinct: function(x) rowMeans(x$I == 0)
   
 time_scale: dt
