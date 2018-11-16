@@ -2,8 +2,4 @@ packages:
   - odin.ui
 
 package_sources:
-  github:
-    - mrc-ide/cinterpolate
-    - richfitz/dde
-    - mrc-ide/odin
-    - mrc-ide/odin.ui
+  repos: drat://mrc-ide
