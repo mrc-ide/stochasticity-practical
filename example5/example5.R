@@ -28,7 +28,7 @@ n_deaths_S <- rbinom(n_events_S, mu/(FOI + mu)) # SIR: a fraction of S events ar
 n_infections_S <- n_events_S - n_deaths_S	# SIR: ...the rest are infections. 
 
 n_events_I <- rbinom(I, (nu+mu)*dt ) # SIR: two types of events for I, so competing hazards.
-n_deaths_I <- rbinom(I, mu/(mu + nu)) # SIR: a fraction of I events are deaths.
+n_deaths_I <- rbinom(n_events_I, mu/(mu + nu)) # SIR: a fraction of I events are deaths.
 n_recoveries_I <- n_events_I - n_deaths_I # SIR: ...the rest are recoveries. 
 
 n_deaths_R <- rbinom(R, mu*dt)

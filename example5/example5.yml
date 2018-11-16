@@ -21,7 +21,7 @@ parameters:
 
 output:
   exclude: time
-  second_y: extinct
+  second_y: percent_fade
 
 extra:
   mean_S: function(x) rowMeans(x$S)
