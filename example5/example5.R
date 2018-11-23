@@ -4,7 +4,7 @@ mu <- user(0.00033) # death rate
 prop_immune <- user(0) # proportion of population initially immune
 
 N <- user(10000)  # total population.
-I0 <- user(10) # initial infecteds
+I0 <- user(5) # initial infecteds
 S0 <- (N-I0)*(1 - prop_immune) # initial susceptibles
 
 I0_at_steady_state <- user(0)
